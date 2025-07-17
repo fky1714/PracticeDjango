@@ -1,0 +1,39 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}投稿一覧 | Djangoブログ{% endblock %}
+
+{% block content %}
+    <h2>投稿一覧</h2>
+    <p><a href="{% url 'blog:post_new' %}" class="btn">新しい投稿を作成する</a></p>
+
+    {% for post in posts %}
+        <article class="post">
+            <h2><a href="{% url 'blog:post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
+            <p class="post-meta">
+                作成日: {{ post.created_at|date:"Y/m/d H:i" }} |
+                更新日: {{ post.updated_at|date:"Y/m/d H:i" }}
+            </p>
+            <p>{{ post.content|truncatechars:100 }}</p> {# 100文字で切り詰めて表示 #}
+        </article>
+    {% empty %}
+        <p>まだ投稿がありません。</p>
+    {% endfor %}
+
+    {# ページネーション #}
+    {% if page_obj.has_previous or page_obj.has_next %}
+        <nav class="page-nav">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">前のページへ</a>
+            {% endif %}
+
+            <span style="margin: 0 1rem;">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">次のページへ</a>
+            {% endif %}
+        </nav>
+    {% endif %}
+
+{% endblock %}

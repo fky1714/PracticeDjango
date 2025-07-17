@@ -1,0 +1,25 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }} | Djangoブログ{% endblock %}
+
+{% block content %}
+    <article class="post">
+        <h2>{{ post.title }}</h2>
+        <p class="post-meta">
+            作成日: {{ post.created_at|date:"Y/m/d H:i" }} |
+            更新日: {{ post.updated_at|date:"Y/m/d H:i" }}
+        </p>
+        <div class="post-content">
+            {{ post.content|linebreaksbr }} {# 改行を<br>タグに変換して表示 #}
+        </div>
+    </article>
+
+    <hr>
+
+    <a href="{% url 'blog:post_edit' pk=post.pk %}" class="btn">編集する</a>
+    <a href="{% url 'blog:post_delete' pk=post.pk %}" class="btn btn-danger">削除する</a>
+    <br>
+    <br>
+    <a href="{% url 'blog:post_list' %}" class="btn btn-secondary">一覧に戻る</a>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}投稿の削除 | Djangoブログ{% endblock %}
+
+{% block content %}
+    <h2>投稿を削除する</h2>
+
+    <p>本当に「{{ post.title }}」を削除しますか？</p>
+    <p>この操作は元に戻すことができません。</p>
+
+    <form method="post">
+        {% csrf_token %} {# CSRF対策 #}
+        <button type="submit" class="btn btn-danger">はい、削除します</button>
+        <a href="{% url 'blog:post_detail' pk=post.pk %}" class="btn btn-secondary">いいえ、キャンセルします</a>
+    </form>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Djangoブログ{% endblock %}</title>
+    <!-- シンプルなスタイルシートを追加 -->
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 2rem; }
+        header { border-bottom: 1px solid #ccc; margin-bottom: 2rem; padding-bottom: 1rem; }
+        h1, h2 { color: #333; }
+        a { text-decoration: none; color: #007bff; }
+        a:hover { text-decoration: underline; }
+        .post { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #eee; }
+        .post-meta { font-size: 0.9rem; color: #666; }
+        .btn { display: inline-block; padding: 0.5rem 1rem; background: #007bff; color: #fff; border-radius: 3px; }
+        .btn-secondary { background: #6c757d; }
+        .btn-danger { background: #dc3545; }
+        form p { margin-bottom: 1rem; }
+        input[type="text"], textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; }
+        .page-nav { margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'blog:post_list' %}">Django学習ブログ</a></h1>
+        <p>Djangoの基本的なCRUDを学ぶためのサンプルアプリケーションです。</p>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- 各ページのコンテンツがここに挿入されます -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Django学習プロジェクト</p>
+    </footer>
+</body>
+</html>
