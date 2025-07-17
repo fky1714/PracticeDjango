@@ -1,6 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.core.exceptions import PermissionDenied
+from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic.edit import UpdateView, DeleteView
 from .models import Post
 from .forms import PostForm
 
@@ -10,16 +13,12 @@ class PostListView(ListView):
     """
     投稿の一覧を表示するビュー
     """
-    # どのモデルのリストを表示するかを指定
     model = Post
-    # どのテンプレートを使って表示するかを指定
-    # 指定しない場合は <app_name>/<model_name>_list.html (blog/post_list.html) が自動的に使われる
     template_name = 'blog/post_list.html'
-    # テンプレートに渡すオブジェクトのリストの名前を指定
-    # 指定しない場合は object_list という名前で渡される
     context_object_name = 'posts'
-    # 1ページに表示するオブジェクトの数を指定
     paginate_by = 5
+    # querysetをオーバーライドして、投稿を作成日時の降順で並び替える
+    queryset = Post.objects.order_by('-created_at')
 
 class PostDetailView(DetailView):
     """
@@ -31,7 +30,7 @@ class PostDetailView(DetailView):
     # 指定しない場合は object という名前で渡される
     context_object_name = 'post'
 
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     """
     新しい投稿を作成するビュー
     """
@@ -46,23 +45,28 @@ class PostCreateView(CreateView):
         """
         フォームのデータが有効だった場合の処理
         """
-        # フォームのインスタンスに、現在ログインしているユーザーを紐付けるなどの処理をここで行うことが多い
-        # 今回は特に処理は不要なので、親クラスのform_validをそのまま呼び出す
+        # フォームが保存される前に、投稿のauthorを現在ログインしているユーザーに設定
+        form.instance.author = self.request.user
         return super().form_valid(form)
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     投稿を編集するビュー
     """
     model = Post
-    form_class = PostForm # fieldsの代わりにform_classを使用
+    form_class = PostForm
     template_name = 'blog/post_form.html'
-    # 編集対象のオブジェクトを特定するためのURLパラメータ名を指定
-    # デフォルトは 'pk' なので、今回は省略可能
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('blog:post_list')
 
-class PostDeleteView(DeleteView):
+    def test_func(self):
+        """
+        アクセスしているユーザーが投稿者本人か、スーパーユーザーであるかをチェック
+        """
+        post = self.get_object()
+        return post.author == self.request.user or self.request.user.is_superuser
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     投稿を削除するビュー
     """
@@ -70,3 +74,19 @@ class PostDeleteView(DeleteView):
     template_name = 'blog/post_confirm_delete.html'
     success_url = reverse_lazy('blog:post_list')
     context_object_name = 'post'
+
+    def test_func(self):
+        """
+        アクセスしているユーザーが投稿者本人か、スーパーユーザーであるかをチェック
+        """
+        post = self.get_object()
+        return post.author == self.request.user or self.request.user.is_superuser
+
+class SignUpView(CreateView):
+    """
+    ユーザー登録（サインアップ）を行うビュー
+    """
+    form_class = UserCreationForm
+    # 登録が成功したらログインページにリダイレクト
+    success_url = reverse_lazy('login')
+    template_name = 'blog/signup.html'

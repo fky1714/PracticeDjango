@@ -76,7 +76,7 @@ WSGI_APPLICATION = "django_blog.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.path.abspath(os.path.join(BASE_DIR, "db.sqlite3")),
     }
 }
 
@@ -121,3 +121,9 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ログイン後のリダイレクト先
+LOGIN_REDIRECT_URL = '/'
+
+# ログアウト後のリダイレクト先
+LOGOUT_REDIRECT_URL = '/'

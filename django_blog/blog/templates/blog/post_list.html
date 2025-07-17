@@ -4,12 +4,15 @@
 
 {% block content %}
     <h2>投稿一覧</h2>
-    <p><a href="{% url 'blog:post_new' %}" class="btn">新しい投稿を作成する</a></p>
+    {% if user.is_authenticated %}
+        <p><a href="{% url 'blog:post_new' %}" class="btn">新しい投稿を作成する</a></p>
+    {% endif %}
 
     {% for post in posts %}
         <article class="post">
             <h2><a href="{% url 'blog:post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
             <p class="post-meta">
+                著者: {{ post.author.username }} |
                 作成日: {{ post.created_at|date:"Y/m/d H:i" }} |
                 更新日: {{ post.updated_at|date:"Y/m/d H:i" }}
             </p>

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -17,6 +18,15 @@ class Post(models.Model):
     # 投稿の内容
     # TextFieldは長いテキストを格納するためのフィールド
     content = models.TextField('本文')
+
+    # 著者
+    # Djangoの標準Userモデルと ForeignKey で紐付ける
+    # on_delete=models.CASCADE は、ユーザーが削除されたらそのユーザーの投稿も削除する設定
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='posts'
+    )
 
     # 作成日時
     # DateTimeFieldは日時を格納するためのフィールド

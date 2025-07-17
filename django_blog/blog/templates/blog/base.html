@@ -23,8 +23,22 @@
 </head>
 <body>
     <header>
-        <h1><a href="{% url 'blog:post_list' %}">Django学習ブログ</a></h1>
-        <p>Djangoの基本的なCRUDを学ぶためのサンプルアプリケーションです。</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1><a href="{% url 'blog:post_list' %}">Django学習ブログ</a></h1>
+                <p>Djangoの基本的なCRUDを学ぶためのサンプルアプリケーションです。</p>
+            </div>
+            <nav>
+                {% if user.is_authenticated %}
+                    <span>ようこそ、 <strong>{{ user.username }}</strong> さん</span>
+                    <a href="{% url 'blog:post_new' %}" class="btn" style="margin-left: 1rem;">新しい投稿</a>
+                    <a href="{% url 'logout' %}" class="btn btn-secondary" style="margin-left: 0.5rem;">ログアウト</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn">ログイン</a>
+                    <a href="{% url 'blog:signup' %}" class="btn btn-secondary" style="margin-left: 0.5rem;">サインアップ</a>
+                {% endif %}
+            </nav>
+        </div>
     </header>
 
     <main>

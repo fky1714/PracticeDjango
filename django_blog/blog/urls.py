@@ -7,6 +7,9 @@ app_name = 'blog'
 urlpatterns = [
     # path(URLパターン, ビュー関数, name=URLの名前)
 
+    # サインアップページ
+    path('signup/', views.SignUpView.as_view(), name='signup'),
+
     # 投稿一覧ページ
     # URL: /
     path('', views.PostListView.as_view(), name='post_list'),

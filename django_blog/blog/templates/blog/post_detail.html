@@ -6,6 +6,7 @@
     <article class="post">
         <h2>{{ post.title }}</h2>
         <p class="post-meta">
+            著者: {{ post.author.username }} |
             作成日: {{ post.created_at|date:"Y/m/d H:i" }} |
             更新日: {{ post.updated_at|date:"Y/m/d H:i" }}
         </p>
@@ -16,10 +17,12 @@
 
     <hr>
 
-    <a href="{% url 'blog:post_edit' pk=post.pk %}" class="btn">編集する</a>
-    <a href="{% url 'blog:post_delete' pk=post.pk %}" class="btn btn-danger">削除する</a>
-    <br>
-    <br>
+    {% if user.is_authenticated and (post.author == user or user.is_superuser) %}
+        <a href="{% url 'blog:post_edit' pk=post.pk %}" class="btn">編集する</a>
+        <a href="{% url 'blog:post_delete' pk=post.pk %}" class="btn btn-danger">削除する</a>
+        <br>
+        <br>
+    {% endif %}
     <a href="{% url 'blog:post_list' %}" class="btn btn-secondary">一覧に戻る</a>
 
 {% endblock %}
